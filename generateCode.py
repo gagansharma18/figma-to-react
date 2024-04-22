@@ -27,7 +27,7 @@ figma_doc_retreiver = index.vectorstore.as_retriever()
 
 # Define system and human prompt templates
 system_prompt_template = """You are a senior developer.
-Use the provided design context to create idiomatic HTML/CSS code based on the user request.
+Use the provided design context to create idiomatic React components code based on the user request.
 Everything must be inline in one file and your response must be directly renderable by the browser.
 Write code that matches the Figma file nodes and metadata as exactly as you can.
 Figma file nodes and metadata: {context}"""
@@ -56,7 +56,7 @@ def generate_code(input):
     return response.content
 
 # Add argument parsing to allow for command-line input
-parser = argparse.ArgumentParser(description='Generate HTML/CSS code based on input.')
+parser = argparse.ArgumentParser(description='Generate React components code based on input.')
 parser.add_argument('input_text', type=str, help='The input text for generating code.')
 args = parser.parse_args()
 

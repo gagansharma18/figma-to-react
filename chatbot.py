@@ -57,7 +57,7 @@ def write_html_content(html_content):
     with open(updated_file_name, "w") as file:
         file.write(html_content)
 
-# Function to check if the output is a valid HTML/CSS code update
+# Function to check if the output is a valid React components code update
 def is_valid_html_css_code(output):
     pattern = re.compile(r'<.*?>|{.*?}')
     return bool(pattern.search(output))
@@ -66,8 +66,8 @@ def is_valid_html_css_code(output):
 def generate_response(prompt, html_content):
     completion = chatgpt_chain.predict(
         human_input=(
-            "You are a senior developer. I want you to improve the following code with the following {prompt}: {html_content}. Only output new html/css code. Do not write additional text."
-            "The code is html/css that was created by AI based on a Figma document."
+            "You are a senior developer. I want you to improve the following code with the following {prompt}: {html_content}. Only output new React components code. Do not write additional text."
+            "The code is React components that was created by AI based on a Figma document."
         ).format(prompt=prompt, html_content=html_content)
     )
     return completion
