@@ -1,0 +1,32 @@
+import os
+import subprocess
+
+def delete_file_from_branches(file_to_delete):
+    try:
+        # Get list of remote branches
+        branches = subprocess.check_output(['git', 'branch', '-r']).decode('utf-8').splitlines()
+        
+        # Iterate through each branch
+        for branch in branches:
+            branch_name = branch.strip()
+            if branch_name.startswith('origin/') and branch_name != 'origin/master':
+                # Checkout the branch
+                subprocess.run(['git', 'checkout', '--quiet', branch_name[len('origin/'):]], check=True)
+                
+                # Delete the file if it exists
+                file_path = os.path.join(os.getcwd(), file_to_delete)
+                if os.path.exists(file_path):
+                    subprocess.run(['git', 'rm', '-f', file_to_delete], check=True)
+                    subprocess.run(['git', 'commit', '-m', f'Deleted {file_to_delete} from branch {branch_name[len("origin/"):]}', '--quiet'], check=True)
+                    print(f"Deleted {file_to_delete} from branch {branch_name[len('origin/'):]}")
+                else:
+                    print(f"{file_to_delete} does not exist in branch {branch_name[len('origin/'):]}")
+        
+        # Switch back to the original branch
+        subprocess.run(['git', 'checkout', '--quiet', '-'], check=True)
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {e}")
+
+# Example usage:
+delete_file_from_branches('path/to/file.ext')
