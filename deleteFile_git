@@ -86,3 +86,50 @@ echo "Deletion of $FILE_TO_DELETE from all branches completed."
 - **Safety Precaution**: This script performs operations that rewrite Git history (deleting files). Ensure you understand the implications before running it, especially if the repository is shared and others might have based their work on these branches.
 - **Backup**: Consider backing up your repository or the specific branches before running this script, especially if you're dealing with critical files.
 - **Customization**: Modify the script as per your repository's specific needs (e.g., if you have a different default branch than `master`, adjust the `grep -v 'master'` part).
+
+
+
+
+
+import os
+import git
+
+def replace_line_in_branches(repo_path, old_line, new_line):
+    # Open the repository
+    repo = git.Repo(repo_path)
+
+    # Iterate through all branches
+    for branch in repo.branches:
+        print(f"Checking out branch: {branch.name}")
+        repo.git.checkout(branch.name)
+
+        # Iterate through all tracked files in the repository
+        for item in repo.index.entries.keys():
+            file_path = os.path.join(repo.working_tree_dir, item)
+
+            # Check if the file exists and is a regular file
+            if os.path.isfile(file_path):
+                with open(file_path, 'r') as file:
+                    lines = file.readlines()
+
+                # Iterate through the lines to find and replace the old line
+                replaced = False
+                with open(file_path, 'w') as file:
+                    for line in lines:
+                        if line.strip() == old_line:
+                            file.write(new_line + '\n')
+                            replaced = True
+                        else:
+                            file.write(line)
+
+                if replaced:
+                    print(f"Replaced '{old_line}' with '{new_line}' in file: {file_path}")
+
+    print("Replacement process completed.")
+
+# Example usage:
+repo_path = '/path/to/your/repository'
+old_line_to_replace = 'Specific line to replace'
+new_line_to_insert = 'New line to replace with'
+
+replace_line_in_branches(repo_path, old_line_to_replace, new_line_to_insert)
